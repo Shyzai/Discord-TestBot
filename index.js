@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
+const mongo = require('./mongo');
 const { prefix, token } = require('./config.json');
 
 const client = new Discord.Client();
@@ -16,8 +17,18 @@ for (const folder of commandFolders) {
 	}
 }
 
-client.once('ready', () => {
+client.once('ready', async () => {
 	console.log('Ready!');
+
+  await mongo().then(mongoose => {
+    try{
+      console.log('Connected to mongodb!');
+    }catch(e){
+      console.log('mongo error:' + e);
+    }finally{
+      mongoose.connection.close();
+    }
+  })
 });
 
 client.on('message', message => {
